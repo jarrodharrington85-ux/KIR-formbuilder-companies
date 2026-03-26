@@ -5034,25 +5034,28 @@ function validateCurrentStep() {
     }
   }
 
-  // Soft warning: Kiribati director residency (CO-0, CO-1)
+  // Soft warning: Kiribati director residency (CO-0, CO-1) — only on the director step
   const _fid = currentWizard && currentWizard.taskDef && currentWizard.taskDef.id;
   if (_fid === 'co0' || _fid === 'co1') {
-    const dirCards = stepEl.querySelectorAll('.dir-card');
-    if (dirCards.length > 0) {
-      const hasKiribatiResident = Array.from(dirCards).some(card => {
-        const countrySel = card.querySelector('select[id$="_country"]');
-        return countrySel && countrySel.value === 'Kiribati';
-      });
-      let warn = stepEl.querySelector('.ki-residency-warning');
-      if (!hasKiribatiResident) {
-        if (!warn) {
-          warn = document.createElement('div');
-          warn.className = 'info-box amber ki-residency-warning';
-          warn.textContent = 'At least one director should be ordinarily resident in Kiribati. The registry may reject this application if no director meets this requirement.';
-          stepEl.insertBefore(warn, stepEl.firstChild);
+    const dirContainer = stepEl.querySelector('#' + _fid + '_dirContainer');
+    if (dirContainer) {
+      const dirCards = dirContainer.querySelectorAll('.dir-card');
+      if (dirCards.length > 0) {
+        const hasKiribatiResident = Array.from(dirCards).some(card => {
+          const countrySel = card.querySelector('select[id$="_country"]');
+          return countrySel && countrySel.value === 'Kiribati';
+        });
+        let warn = stepEl.querySelector('.ki-residency-warning');
+        if (!hasKiribatiResident) {
+          if (!warn) {
+            warn = document.createElement('div');
+            warn.className = 'info-box amber ki-residency-warning';
+            warn.textContent = 'At least one director should be ordinarily resident in Kiribati. The registry may reject this application if no director meets this requirement.';
+            stepEl.insertBefore(warn, stepEl.firstChild);
+          }
+        } else {
+          if (warn) warn.remove();
         }
-      } else {
-        if (warn) warn.remove();
       }
     }
   }
